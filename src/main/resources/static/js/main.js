@@ -20,15 +20,25 @@ function connect(event) {
     fullname = document.querySelector('#fullname').value.trim();
 
     if (nickname && fullname) {
-        usernamePage.classList.add('hidden');
-        chatPage.classList.remove('hidden');
+        const token = getAuthToken();
+        if (token) {
+            usernamePage.classList.add('hidden');
+            chatPage.classList.remove('hidden');
 
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
+            const socket = new SockJS('/ws?token=' + token);
+            stompClient = Stomp.over(socket);
 
-        stompClient.connect({}, onConnected, onError);
+            stompClient.connect({}, onConnected, onError);
+        } else {
+            console.error('Authentication token is missing');
+        }
     }
     event.preventDefault();
+}
+
+function getAuthToken() {
+    // pass Token form user
+    return "dragane-care";
 }
 
 
@@ -85,15 +95,6 @@ function appendUserElement(user, connectedUsersList) {
     receivedMsgs.classList.add('nbr-msg', 'hidden');
 
     setNotifications(receivedMsgs, user.nickName);
-
-    // if (notificationUsers !== null) {
-    //     notificationUsers.forEach(nu => {
-    //         if (nu.senderId === user.nickName) {
-    //             receivedMsgs.classList.remove('hidden')
-    //             receivedMsgs.textContent = nu.number;
-    //         }
-    //     })
-    // }
 
     listItem.appendChild(userImage);
     listItem.appendChild(usernameSpan);
