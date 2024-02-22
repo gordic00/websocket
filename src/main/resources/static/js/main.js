@@ -16,6 +16,7 @@ let selectedUserId = null;
 let notificationUsers = null;
 
 function connect(event) {
+    //todo populate username and full name from token
     nickname = document.querySelector('#nickname').value.trim();
     fullname = document.querySelector('#fullname').value.trim();
 
@@ -24,7 +25,7 @@ function connect(event) {
         if (token) {
             usernamePage.classList.add('hidden');
             chatPage.classList.remove('hidden');
-
+            //todo decide whether is token necessary or not
             const socket = new SockJS('/ws?token=' + token);
             stompClient = Stomp.over(socket);
 
@@ -37,7 +38,7 @@ function connect(event) {
 }
 
 function getAuthToken() {
-    // pass Token form user
+    //todo pass Token form user
     return "dragane-care";
 }
 
@@ -174,7 +175,6 @@ function sendMessage(event) {
 
 async function onMessageReceived(payload) {
     await findAndDisplayConnectedUsers();
-    console.log('Message received', payload);
     const message = JSON.parse(payload.body);
     if (selectedUserId && selectedUserId === message.senderId) {
         displayMessage(message.senderId, message.content);

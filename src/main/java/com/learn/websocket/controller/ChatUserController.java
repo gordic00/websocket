@@ -4,6 +4,8 @@ import com.learn.websocket.model.User;
 import com.learn.websocket.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.MessageDeliveryException;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -18,6 +20,7 @@ import java.util.List;
 public class ChatUserController {
     private final UserService userService;
 
+    @MessageExceptionHandler(MessageDeliveryException.class)
     @MessageMapping("/user.addUser")
     @SendTo({"/user/public"})
     public User addUser(
@@ -27,6 +30,7 @@ public class ChatUserController {
         return user;
     }
 
+    @MessageExceptionHandler(MessageDeliveryException.class)
     @MessageMapping("/user.disconnectUser")
     @SendTo("/user/public")
     public User disconnectUser(
