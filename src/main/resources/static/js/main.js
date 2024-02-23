@@ -25,8 +25,7 @@ function connect(event) {
         if (token) {
             usernamePage.classList.add('hidden');
             chatPage.classList.remove('hidden');
-            //todo decide whether is token necessary or not
-            const socket = new SockJS('/ws?token=' + token);
+            const socket = new SockJS('/ws?token=' + token + "&username=" + nickname);
             stompClient = Stomp.over(socket);
 
             stompClient.connect({}, onConnected, onError);
@@ -39,13 +38,13 @@ function connect(event) {
 
 function getAuthToken() {
     //todo pass Token form user
-    return "dragane-care";
+    return "jwt - token";
 }
 
 
 function onConnected() {
     stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
-    stompClient.subscribe(`/user/public`, onMessageReceived);
+    stompClient.subscribe(`/public`, onMessageReceived);
 
     // register the connected user
     stompClient.send("/app/user.addUser",

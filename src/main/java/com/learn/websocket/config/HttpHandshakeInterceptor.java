@@ -1,5 +1,8 @@
 package com.learn.websocket.config;
 
+import com.learn.websocket.model.request.UserExportRequest;
+import com.learn.websocket.service.external.NetworkService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -9,13 +12,27 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.Map;
 
 @Configuration
+@RequiredArgsConstructor
 public class HttpHandshakeInterceptor implements HandshakeInterceptor {
+    private final NetworkService networkService;
+
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response,
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
-        String token = extractToken(request);
-        // Validate the token
-        return token.equals("dragane-care");
+        String data = extractData(request);
+        return validate(data);
+    }
+
+    private boolean validate(String data) {
+        try {
+            String[] parts = data.split("&username=");
+            UserExportRequest request = new UserExportRequest();
+            request.setToken(parts[0]);
+            request.setUsername(parts[1]);
+            return Boolean.TRUE.equals(networkService.validate(request).getBody());
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     @Override
@@ -24,9 +41,8 @@ public class HttpHandshakeInterceptor implements HandshakeInterceptor {
         // Do nothing after the handshake
     }
 
-    private String extractToken(ServerHttpRequest request) {
-        System.out.println(request.getHeaders());
-        String token = request.getURI().getQuery();
-        return (token != null && !token.isEmpty()) ? token.substring(6) : "";
+    private String extractData(ServerHttpRequest request) {
+        String data = request.getURI().getQuery();
+        return (data != null && !data.isEmpty()) ? data.substring(6) : "";
     }
 }

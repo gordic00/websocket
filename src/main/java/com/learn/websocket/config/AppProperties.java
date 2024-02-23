@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Getter
@@ -25,4 +26,11 @@ public class AppProperties {
     public final String[] securityHeaders = {
             "authorization", "content-type", "x-auth-token", "jwt-token", "permissions"
     };
+
+    @Value("${spring.security.user.name}")
+    private String globalUser;
+
+    @Value("${spring.security.user.password}")
+    private String globalPassword;
+
 }

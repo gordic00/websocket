@@ -22,7 +22,7 @@ public class ChatUserController {
 
     @MessageExceptionHandler(MessageDeliveryException.class)
     @MessageMapping("/user.addUser")
-    @SendTo({"/user/public"})
+    @SendTo({"/public"})
     public User addUser(
             @Payload User user
     ) {
@@ -32,7 +32,7 @@ public class ChatUserController {
 
     @MessageExceptionHandler(MessageDeliveryException.class)
     @MessageMapping("/user.disconnectUser")
-    @SendTo("/user/public")
+    @SendTo("/public")
     public User disconnectUser(
             @Payload User user
     ) {

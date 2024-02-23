@@ -32,9 +32,6 @@ public class UserService {
     public List<User> findConnectedUsers(String userId) {
         List<ChatMessage> messages = chatMessageRepo.findAllBySenderIdOrRecipientId(userId, userId);
         List<String> users = messages.stream().map(m -> m.getRecipientId().equals(userId) ? m.getSenderId() : m.getRecipientId()).distinct().toList();
-        List<User> response = repo.findAllByNickNameInOrderByStatusDesc(users);
-        //TODO add new endpoint to get list of users by nickname or name contains and delete this under.
-        response.addAll(repo.findAllByNickNameNotInAndStatus(users, Status.ONLINE));
-        return response;
+        return repo.findAllByNickNameInOrderByStatusDesc(users);
     }
 }
